@@ -21,3 +21,13 @@ stop: ## Stop containers
 remove: ## Remove containers
 	docker-compose stop
 	docker-compose rm -fv php
+
+change-namespace:
+	@read -p "New Namespace: " new_namespace; \
+	sed -i '' "s/AppTemplate\\\\/$$new_namespace\\\\/g" composer.json
+
+change-container-name:
+	@read -p "New container name: " new_container_name; \
+	sed -i '' "s/php_app_template_php/php_$$new_container_name\_php/g" docker-compose.yaml
+
+init: change-namespace change-container-name

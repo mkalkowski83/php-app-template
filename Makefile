@@ -1,15 +1,10 @@
-## this commands can be run only from container
-install:
-	composer install --no-interaction --no-scripts
-phpunit:
-	bin/phpunit
+change-namespace:
+	@read -p "New Namespace: " new_namespace; \
+	sed -i '' "s/AppTemplate\\\\/$$new_namespace\\\\/g" composer.json
 
-sh: ## login into container (shell)
-	docker-compose exec php sh
-bash: ## login into container (bash)
-	docker-compose exec php bash
-test: ## Run tests
-	docker-compose exec php bin/phpunit tests --colors=always --coverage-text --coverage-html=build/coverage
+change-container-name:
+	@read -p "New container name: " new_container_name; \
+	sed -i '' "s/php_app_template_php/php_$$new_container_name\_php/g" docker-compose.yaml
 
 ## Docker commands
 build: ## Builds the Docker images
@@ -21,13 +16,14 @@ stop: ## Stop containers
 remove: ## Remove containers
 	docker-compose stop
 	docker-compose rm -fv php
+bash: ## login into container (bash)
+	docker-compose exec php bash
 
-change-namespace:
-	@read -p "New Namespace: " new_namespace; \
-	sed -i '' "s/AppTemplate\\\\/$$new_namespace\\\\/g" composer.json
+install: ## Install dependencies
+	docker-compose exec php composer install --no-interaction --no-scripts
 
-change-container-name:
-	@read -p "New container name: " new_container_name; \
-	sed -i '' "s/php_app_template_php/php_$$new_container_name\_php/g" docker-compose.yaml
+test: ## Run tests
+	docker-compose exec php bin/phpunit tests --colors=always --coverage-text --coverage-html=build/coverage
 
-init: change-namespace change-container-name
+init: change-namespace change-container-name build up install
+

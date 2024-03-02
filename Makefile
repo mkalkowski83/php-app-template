@@ -5,6 +5,7 @@ change-namespace:
 change-container-name:
 	@read -p "New container name: " new_container_name; \
 	sed -i '' "s/php_app_template_php/php_$$new_container_name\_php/g" docker-compose.yaml
+	sed -i '' "s/app_template_network/$$new_container_name\_network/g" docker-compose.yaml
 
 ## Docker commands
 build: ## Builds the Docker images
